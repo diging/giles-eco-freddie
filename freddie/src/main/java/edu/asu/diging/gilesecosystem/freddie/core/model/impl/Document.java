@@ -5,6 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
 
 @SolrDocument(solrCoreName="documents")
@@ -22,6 +24,7 @@ public class Document implements IDocument {
     @Field("document_id_s")
     private String documentId;
     
+    @JsonIgnore
     @Indexed(name="content", type="string")
     @Field("content_txt")
     private String content;
