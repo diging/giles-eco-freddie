@@ -24,6 +24,10 @@ public class Document implements IDocument {
     @Field("document_id_s")
     private String documentId;
     
+    @Indexed
+    @Field("username_s")
+    private String username;
+    
     @JsonIgnore
     @Indexed(name="content", type="string")
     @Field("content_txt")
@@ -75,6 +79,16 @@ public class Document implements IDocument {
     @Override
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /* (non-Javadoc)

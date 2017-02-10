@@ -8,17 +8,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import edu.asu.diging.gilesecosystem.freddie.core.exception.SearchQueryException;
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
-import edu.asu.diging.gilesecosystem.freddie.core.service.IIndexService;
+import edu.asu.diging.gilesecosystem.freddie.core.service.ISolrService;
 
 @RestController
 public class RestSearchController {
     
     @Autowired
-    private IIndexService indexService;
+    private ISolrService indexService;
 
     @RequestMapping(value="/search", method=RequestMethod.GET)
-    public List<IDocument> search(@RequestParam("q") String query) {
+    public List<IDocument> search(@RequestParam("q") String query) throws SearchQueryException {
         return indexService.find(query);
     }
 }

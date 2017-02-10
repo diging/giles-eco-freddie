@@ -25,6 +25,7 @@
         <th>File Id</th>
         <th>Stored File Id</th>
         <th>Document Id</th>
+        <th>Username</th>
         <th>Content</th>
     </tr>
     
@@ -33,6 +34,7 @@
         <td>${doc.fileId}</td>
         <td>${doc.storedFileId}</td>
         <td>${doc.documentId}</td>
+        <td>${doc.username}</td>
         <td>${fn:substring(doc.content, 0, 100)} ...</td>
     </tr>
 	</c:forEach>

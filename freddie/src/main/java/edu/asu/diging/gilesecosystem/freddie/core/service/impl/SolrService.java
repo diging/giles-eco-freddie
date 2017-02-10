@@ -11,21 +11,26 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import edu.asu.diging.gilesecosystem.freddie.core.exception.SearchQueryException;
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
 import edu.asu.diging.gilesecosystem.freddie.core.model.impl.Document;
+import edu.asu.diging.gilesecosystem.freddie.core.repository.CustomSeachRepository;
 import edu.asu.diging.gilesecosystem.freddie.core.repository.DocumentRepository;
-import edu.asu.diging.gilesecosystem.freddie.core.service.IIndexService;
+import edu.asu.diging.gilesecosystem.freddie.core.service.ISolrService;
 import edu.asu.diging.gilesecosystem.requests.FileType;
 import edu.asu.diging.gilesecosystem.requests.ICompletedStorageRequest;
 import edu.asu.diging.gilesecosystem.util.files.IFileContentUtility;
 
 @Service
-public class IndexService implements IIndexService {
+public class SolrService implements ISolrService {
     
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
     @Autowired
-    private DocumentRepository repository;
+    private CustomSeachRepository repository;
+    
+    @Autowired
+    private DocumentRepository crudRepo;
     
     @Autowired
     private IFileContentUtility fileUtility;
@@ -44,6 +49,7 @@ public class IndexService implements IIndexService {
         document.setDocumentId(request.getDocumentId());
         document.setFileId(request.getFileId());
         document.setStoredFileId(request.getStoredFileId());
+        document.setUsername(request.getUsername());
         
         try {
             byte[] fileContent = fileUtility.getFileContentFromUrl(new URL(request.getDownloadUrl()));
@@ -55,15 +61,15 @@ public class IndexService implements IIndexService {
             return;
         }
         
-        repository.save(document);
+        crudRepo.save(document);
     }
     
     /* (non-Javadoc)
      * @see edu.asu.diging.gilesecosystem.freddie.core.service.impl.IIndexService#find(java.lang.String)
      */
     @Override
-    public List<IDocument> find(String query) {
-        List<Document> docs = repository.findByContent(query);
+    public List<IDocument> find(String query) throws SearchQueryException {
+        List<Document> docs = repository.searchWithNativeString(query);
         return docs.stream().map(d -> (IDocument) d).collect(Collectors.toList());
     }
 }
