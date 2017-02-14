@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import edu.asu.diging.gilesecosystem.freddie.core.exception.SearchQueryException;
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
 import edu.asu.diging.gilesecosystem.freddie.core.model.impl.Document;
-import edu.asu.diging.gilesecosystem.freddie.core.repository.CustomSeachRepository;
+import edu.asu.diging.gilesecosystem.freddie.core.repository.CustomSearchRepository;
 import edu.asu.diging.gilesecosystem.freddie.core.repository.DocumentRepository;
 import edu.asu.diging.gilesecosystem.freddie.core.service.ISolrService;
 import edu.asu.diging.gilesecosystem.requests.FileType;
@@ -27,7 +27,7 @@ public class SolrService implements ISolrService {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
     @Autowired
-    private CustomSeachRepository repository;
+    private CustomSearchRepository repository;
     
     @Autowired
     private DocumentRepository crudRepo;
@@ -70,6 +70,11 @@ public class SolrService implements ISolrService {
     @Override
     public List<IDocument> find(String query) throws SearchQueryException {
         List<Document> docs = repository.searchWithNativeString(query);
+        return docs.stream().map(d -> (IDocument) d).collect(Collectors.toList());
+    }
+    
+    public List<IDocument> find(String query, String username) throws SearchQueryException {
+        List<Document> docs = repository.searchWithQueryByUser(query, username);
         return docs.stream().map(d -> (IDocument) d).collect(Collectors.toList());
     }
 }
