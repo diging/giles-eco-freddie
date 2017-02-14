@@ -3,6 +3,7 @@ package edu.asu.diging.gilesecosystem.freddie.rest;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,7 +25,7 @@ public class RestSearchController {
         return indexService.find(query);
     }
     
-    @RequestMapping(value="/search/{username}", method=RequestMethod.GET)
+    @RequestMapping(value="/search/{username}", method=RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public List<IDocument> searchWithUsername(@RequestParam("q") String query, @PathVariable String username) throws SearchQueryException {
         return indexService.find(query, username);
     }
