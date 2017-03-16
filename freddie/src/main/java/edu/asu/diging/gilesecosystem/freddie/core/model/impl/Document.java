@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
 
-@SolrDocument(solrCoreName="documents")
+@SolrDocument()
 public class Document implements IDocument {
 
     @Id

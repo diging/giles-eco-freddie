@@ -4,4 +4,5 @@ public interface Properties {
 
     public final static String SOLR_HOST = "solr.host";
     public final static String KAFKA_HOSTS = "kafka.host";
+    public final static String SOLR_CORE_NAME = "solr.core.name";
 }

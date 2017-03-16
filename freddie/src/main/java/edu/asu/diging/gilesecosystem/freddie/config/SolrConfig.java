@@ -29,6 +29,6 @@ public class SolrConfig {
  
     @Bean
     public SolrTemplate solrTemplate(SolrClient client) throws Exception {
-        return new SolrTemplate(client, "documents");
+        return new SolrTemplate(client, propertiesManager.getProperty(Properties.SOLR_CORE_NAME));
     }
 }
