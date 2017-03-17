@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
 
-@SolrDocument(solrCoreName="documents")
+@SolrDocument()
 public class Document implements IDocument {
 
     @Id
@@ -23,6 +23,10 @@ public class Document implements IDocument {
     @Indexed(searchable=false, stored=true)
     @Field("document_id_s")
     private String documentId;
+    
+    @Indexed
+    @Field("username_s")
+    private String username;
     
     @JsonIgnore
     @Indexed(name="content", type="string")
@@ -75,6 +79,16 @@ public class Document implements IDocument {
     @Override
     public void setDocumentId(String documentId) {
         this.documentId = documentId;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /* (non-Javadoc)

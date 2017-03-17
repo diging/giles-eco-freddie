@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import edu.asu.diging.gilesecosystem.freddie.core.service.IIndexService;
+import edu.asu.diging.gilesecosystem.freddie.core.service.ISolrService;
 import edu.asu.diging.gilesecosystem.requests.ICompletedStorageRequest;
 import edu.asu.diging.gilesecosystem.requests.impl.CompletedStorageRequest;
 
@@ -23,7 +23,7 @@ public class KafkaProcessingListener {
     private final Logger logger = LoggerFactory.getLogger(getClass());
     
     @Autowired
-    private IIndexService indexService;
+    private ISolrService indexService;
 
     @KafkaListener(id="freddie.listener", topics = {"${topic_storage_request_complete}"})
     public void receiveMessage(String message, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {

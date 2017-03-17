@@ -18,4 +18,8 @@ public interface IDocument {
 
     public abstract void setContent(String content);
 
+    public abstract void setUsername(String username);
+
+    public abstract String getUsername();
+
 }
