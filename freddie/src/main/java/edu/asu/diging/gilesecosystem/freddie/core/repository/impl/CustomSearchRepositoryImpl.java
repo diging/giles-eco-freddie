@@ -12,15 +12,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.solr.UncategorizedSolrException;
 import org.springframework.data.solr.core.SolrTemplate;
+import org.springframework.data.solr.core.query.HighlightOptions;
 import org.springframework.data.solr.core.query.HighlightQuery;
 import org.springframework.data.solr.core.query.SimpleHighlightQuery;
 import org.springframework.data.solr.core.query.SimpleStringCriteria;
+import org.springframework.data.solr.core.query.result.HighlightEntry.Highlight;
 import org.springframework.data.solr.core.query.result.HighlightPage;
 import org.springframework.stereotype.Component;
 
+import edu.asu.diging.gilesecosystem.freddie.core.Properties;
 import edu.asu.diging.gilesecosystem.freddie.core.exception.SearchQueryException;
 import edu.asu.diging.gilesecosystem.freddie.core.model.impl.Document;
 import edu.asu.diging.gilesecosystem.freddie.core.repository.CustomSearchRepository;
+import edu.asu.diging.gilesecosystem.util.properties.IPropertiesManager;
 
 @Component
 public class CustomSearchRepositoryImpl implements CustomSearchRepository {
@@ -30,15 +34,21 @@ public class CustomSearchRepositoryImpl implements CustomSearchRepository {
     @Autowired
     private SolrTemplate solrTemplate;
     
+    @Autowired
+    private IPropertiesManager propertiesManager;
+    
     @Override
     public List<Document> searchWithNativeString(String query) throws SearchQueryException {
        
         String solrQuery = buildContentSolrQuery(query);
         
         HighlightQuery simpleQuery = new SimpleHighlightQuery(new SimpleStringCriteria(solrQuery));
+        HighlightOptions options = new HighlightOptions();
+        options.setNrSnipplets(new Integer(propertiesManager.getProperty(Properties.NR_OF_HIGHLIGHTED_SNIPPETS)));
+        simpleQuery.setHighlightOptions(options);
         try {
             HighlightPage<Document> page = solrTemplate.queryForHighlightPage(simpleQuery, Document.class);
-            return page.getContent();
+            return addSnippets(page);
         } catch (RemoteSolrException | UncategorizedSolrException ex) {
             logger.warn("Could not execute query.");
             throw new SearchQueryException(ex);
@@ -51,9 +61,12 @@ public class CustomSearchRepositoryImpl implements CustomSearchRepository {
         solrQuery += " AND username_s:" + username;
         
         HighlightQuery simpleQuery = new SimpleHighlightQuery(new SimpleStringCriteria(solrQuery));
+        HighlightOptions options = new HighlightOptions();
+        options.setNrSnipplets(new Integer(propertiesManager.getProperty(Properties.NR_OF_HIGHLIGHTED_SNIPPETS)));
+        simpleQuery.setHighlightOptions(options);
         try {
             HighlightPage<Document> page = solrTemplate.queryForHighlightPage(simpleQuery, Document.class);
-            return page.getContent();
+            return addSnippets(page);
         } catch (RemoteSolrException | UncategorizedSolrException ex) {
             logger.warn("Could not execute query.");
             throw new SearchQueryException(ex);
@@ -95,5 +108,19 @@ public class CustomSearchRepositoryImpl implements CustomSearchRepository {
         }
         sb.append(")");
         return sb.toString();
+    }
+    
+    private List<Document> addSnippets(HighlightPage<Document> page) {
+        List<Document> docs = page.getContent();
+        for (Document doc : docs) {
+            List<Highlight> highlights = page.getHighlights(doc);
+            for (Highlight h : highlights) {
+                if (doc.getHighlightedSnippets() ==  null) {
+                    doc.setHighlightedSnippets(new ArrayList<>());
+                }
+                doc.getHighlightedSnippets().addAll(h.getSnipplets());
+            }
+        }
+        return docs;
     }
 }

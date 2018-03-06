@@ -1,5 +1,7 @@
 package edu.asu.diging.gilesecosystem.freddie.core.model.impl;
 
+import java.util.List;
+
 import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
@@ -32,6 +34,9 @@ public class Document implements IDocument {
     @Indexed(name="content", type="string")
     @Field("content_txt")
     private String content;
+    
+    @Indexed(readonly=true)
+    private List<String> highlightedSnippets;
 
     /* (non-Javadoc)
      * @see edu.asu.diging.gilesecosystem.freddie.core.model.impl.IDocument#getFileId()
@@ -105,5 +110,15 @@ public class Document implements IDocument {
     @Override
     public void setContent(String content) {
         this.content = content;
+    }
+    
+    @Override
+    public List<String> getHighlightedSnippets() {
+        return highlightedSnippets;
+    }
+
+    @Override
+    public void setHighlightedSnippets(List<String> highlightedSnippets) {
+        this.highlightedSnippets = highlightedSnippets;
     }
 }

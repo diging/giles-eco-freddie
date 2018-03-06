@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.asu.diging.gilesecosystem.freddie.core.exception.SearchQueryException;
+import edu.asu.diging.gilesecosystem.freddie.core.kafka.ICompletionNotifier;
 import edu.asu.diging.gilesecosystem.freddie.core.model.IDocument;
 import edu.asu.diging.gilesecosystem.freddie.core.model.impl.Document;
 import edu.asu.diging.gilesecosystem.freddie.core.repository.CustomSearchRepository;
@@ -34,6 +35,9 @@ public class SolrService implements ISolrService {
     
     @Autowired
     private IFileContentUtility fileUtility;
+    
+    @Autowired
+    private ICompletionNotifier notifier;
 
     /* (non-Javadoc)
      * @see edu.asu.diging.gilesecosystem.freddie.core.service.impl.IIndexService#indexDocument(edu.asu.diging.gilesecosystem.requests.ICompletedStorageRequest)
@@ -61,7 +65,10 @@ public class SolrService implements ISolrService {
             return;
         }
         
-        crudRepo.save(document);
+        IDocument savedDoc = crudRepo.save(document);
+        if (savedDoc != null) {
+            notifier.sendNotification(request);
+        }
     }
     
     /* (non-Javadoc)
