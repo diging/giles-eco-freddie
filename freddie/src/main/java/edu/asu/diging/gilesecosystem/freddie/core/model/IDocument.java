@@ -1,5 +1,7 @@
 package edu.asu.diging.gilesecosystem.freddie.core.model;
 
+import java.util.List;
+
 public interface IDocument {
 
     public abstract String getFileId();
@@ -21,5 +23,9 @@ public interface IDocument {
     public abstract void setUsername(String username);
 
     public abstract String getUsername();
+
+    void setHighlightedSnippets(List<String> highlightedSnippets);
+
+    List<String> getHighlightedSnippets();
 
 }
